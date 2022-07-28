@@ -57,3 +57,6 @@ docker compose -f ./PizzaApi/PizzaApi.WindowsService/compose.yml up
 4. Start `PizzaApi`, and launch [Swagger UI](http://localhost:1234/swagger)
 
 5. Start `PizzaDesktopApp.attendant`
+
+## State Machine Graph
+![](./saga-state-machine.png)
