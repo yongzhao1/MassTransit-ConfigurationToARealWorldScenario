@@ -8,7 +8,7 @@ namespace PizzaApi.MessageContracts
 {
     public static class RabbitMqConstants
     {
-        public const string RabbitMqUri = "rabbitmq://localhost/pizzaapi/";
+        public const string RabbitMqUri = "rabbitmq://localhost:5672/";
         public const string UserName = "guest";
         public const string Password = "guest";
         public const string RegisterOrderServiceQueue = "registerorder.service";

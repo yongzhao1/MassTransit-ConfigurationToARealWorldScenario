@@ -1,0 +1,6 @@
+version: "3.6"
+services:
+  my-monogodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
