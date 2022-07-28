@@ -9,16 +9,18 @@ using Topshelf;
 using NLog;
 using MassTransit.NLogIntegration;
 using MassTransit.Logging;
+using GreenPipes;
 
 namespace PizzaDesktopApp.Attendant
 {
     public class AttendantService : ServiceControl
     {
         private BusHandle _busHandle;
+        private IBusControl _bus;
 
         public bool Start(HostControl hostControl)
         {
-            var bus = BusConfigurator.ConfigureBus((cfg, host) =>
+            _bus = BusConfigurator.ConfigureBus((cfg, host) =>
             {
                 cfg.ReceiveEndpoint(host, RabbitMqConstants.RegisterOrderServiceQueue, e =>
                 {
@@ -31,7 +33,8 @@ namespace PizzaDesktopApp.Attendant
                     e.UseCircuitBreaker(cb =>
                     {
                         cb.TripThreshold = 15;
-                        cb.ResetInterval(TimeSpan.FromMinutes(5));
+                        //cb.ResetInterval(TimeSpan.FromMinutes(5));
+                        cb.ResetInterval = TimeSpan.FromSeconds(5);
                         cb.TrackingPeriod = TimeSpan.FromMinutes(1);
                         cb.ActiveThreshold = 10;
                     });
@@ -42,17 +45,19 @@ namespace PizzaDesktopApp.Attendant
             });
 
             var consumeObserver = new LogConsumeObserver();
-            bus.ConnectConsumeObserver(consumeObserver);
+            _bus.ConnectConsumeObserver(consumeObserver);
 
-            _busHandle = bus.Start();
-
+            //_busHandle = bus.Start();
+            _bus.Start();
             return true;
         }
 
         public bool Stop(HostControl hostControl)
         {
-            if (_busHandle != null)
-                _busHandle.Stop();
+            //if (_busHandle != null)
+            //    _busHandle.Stop();
+            
+            _bus.Stop();
 
             return true;
         }

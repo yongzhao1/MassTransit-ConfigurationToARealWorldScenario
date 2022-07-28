@@ -19,6 +19,7 @@ using Hangfire.Mongo;
 using Topshelf;
 using Topshelf.Runtime;
 using Topshelf.Logging;
+using GreenPipes;
 
 namespace PizzaApi.WindowsService
 {
@@ -54,7 +55,8 @@ namespace PizzaApi.WindowsService
                     e.UseCircuitBreaker(cb =>
                     {
                         cb.TripThreshold = 15;
-                        cb.ResetInterval(TimeSpan.FromMinutes(5));
+                        //cb.ResetInterval(TimeSpan.FromMinutes(5));
+                        cb.ResetInterval = TimeSpan.FromSeconds(5);
                         cb.TrackingPeriod = TimeSpan.FromMinutes(1);
                         cb.ActiveThreshold = 10;
                     });
@@ -76,7 +78,7 @@ namespace PizzaApi.WindowsService
 
             try
             {
-                _busHandle = _busControl.Start();
+                _busControl.Start();
                 Console.WriteLine("Saga active.. Press enter to exit");
 
                 GlobalConfiguration.Configuration.UseMongoStorage("mongodb://localhost:27017", "hangfire-masstransit");
@@ -88,7 +90,7 @@ namespace PizzaApi.WindowsService
             }
             catch
             {
-                hangfireServer.Dispose();
+                hangfireServer?.Dispose();
                 _busControl.Stop();
 
                 throw;
